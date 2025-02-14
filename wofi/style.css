@@ -1,0 +1,17 @@
+window{
+	font-size: 23px;
+	background-color: rgba(190, 178, 242, 0.75);
+	border: 5px solid #BEB2F2;
+	color: #1a1a55;
+}
+
+#outer-box
+{
+	border: 3px solid #BEB2F2;
+}
+
+#input
+{
+	background-color: rgba(150, 140, 200, 1.0);
+	color: #1a1a55;
+}
