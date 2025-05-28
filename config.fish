@@ -19,6 +19,6 @@ end
 function fish_greeting
 
 end
-function serverssh
+function sshserver
     ssh -p 2222  franchesca@192.168.0.212
 end
