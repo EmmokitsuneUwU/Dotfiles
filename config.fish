@@ -20,5 +20,9 @@ function fish_greeting
 
 end
 function sshserver
-    ssh -p 2222  franchesca@192.168.0.212
+    ssh -p 2222  franchesca@192.168.0.50
+end
+
+function fishconfigedit
+    micro ~/.config/fish/config.fish
 end
