@@ -152,6 +152,8 @@
       noto-fonts-cjk-sans
       noto-fonts-emoji
       font-awesome_6
+      terminus_font
+      terminus_font_ttf
     ];
   };
 
