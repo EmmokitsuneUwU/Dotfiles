@@ -143,6 +143,7 @@
      transmission_4-gtk
      eza
      bat
+     dunst
   ];
   fonts = {
     enableDefaultPackages = true;
