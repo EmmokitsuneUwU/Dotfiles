@@ -53,6 +53,8 @@
   services.displayManager.sddm.wayland.enable = true;
   services.displayManager.sddm.enable = true;
   services.displayManager.defaultSession = "hyprland";
+  services.udisks2.enable = true;
+  security.polkit.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -61,7 +63,10 @@
   };
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.epson-escpr ];
+  };
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -116,8 +121,38 @@
      waybar
      wofi
      gimp
-     flameshot
+     wl-clipboard
+     grim
+     slurp
+     gcc15
+     hyprpaper
+     wlogout
+     pavucontrol
+     kdePackages.kio-extras
+     kdePackages.kio-admin
+     kdePackages.ark
+     feh
+     appimage-run
+     git
+     steam-run
+     epson-escpr
+     emacs-gtk
+     udisks
+     syslinux
+     qemu_full
+     transmission_4-gtk
+     eza
+     bat
   ];
+  fonts = {
+    enableDefaultPackages = true;
+    packages = with pkgs; [
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-emoji
+      font-awesome_6
+    ];
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
