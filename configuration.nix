@@ -17,6 +17,7 @@
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelModules = [ "kvm-intel" ];
 
   networking.hostName = "trans-rights"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -55,7 +56,9 @@
   services.displayManager.defaultSession = "hyprland";
   services.udisks2.enable = true;
   security.polkit.enable = true;
-
+  services.seatd.enable = true;
+  services.xserver.libinput.enable = true;
+  security.pam.services.hyprland.enable = true;
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -91,7 +94,7 @@
   users.users.franchesca = {
     isNormalUser = true;
     description = "Franchesca";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
     useDefaultShell = true;
     packages = with pkgs; [
     #  thunderbird
@@ -104,6 +107,7 @@
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  virtualisation.libvirtd.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -144,6 +148,18 @@
      eza
      bat
      dunst
+     gnome-disk-utility
+     gv
+     bash
+     discord
+     swaylock
+     swayidle
+     lxqt.lxqt-policykit
+     dosbox
+     hyprpicker
+     libinput
+     usbutils
+     mc
   ];
   fonts = {
     enableDefaultPackages = true;
@@ -154,10 +170,11 @@
       font-awesome_6
       terminus_font
       terminus_font_ttf
+      nerd-fonts.iosevka
+  # Some programs need SUID wrappers, can be configured further or are
     ];
   };
 
-  # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
