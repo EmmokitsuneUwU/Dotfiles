@@ -1,40 +1,21 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [ ./hardware-configuration.nix ];
 
-  # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.configurationLimit = 3;
 
-  # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [ "kvm-intel" ];
 
-  networking.hostName = "trans-rights"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
+  networking.hostName = "trans-rights";
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
   time.timeZone = "America/Argentina/Buenos_Aires";
 
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "es_AR.UTF-8";
     LC_IDENTIFICATION = "es_AR.UTF-8";
@@ -47,31 +28,38 @@
     LC_TIME = "es_AR.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  #services.xserver.enable = false;
-
-  # Enable the XFCE Desktop Environment.
-  services.displayManager.sddm.wayland.enable = true;
+  services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
   services.displayManager.defaultSession = "hyprland";
-  services.udisks2.enable = true;
-  security.polkit.enable = true;
-  services.seatd.enable = true;
+
+  services.xserver.videoDrivers = [ "intel" ];
+
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      vaapiIntel
+      vulkan-loader
+      vulkan-tools
+    ];
+    extraPackages32 = with pkgs; [
+      vaapiIntel
+      vulkan-loader
+    ];
+  };
+
   services.xserver.libinput.enable = true;
   security.pam.services.hyprland.enable = true;
-  # Configure keymap in X11
+  services.seatd.enable = true;
+  services.udisks2.enable = true;
+  security.polkit.enable = true;
+
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
-  # Enable CUPS to print documents.
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.epson-escpr ];
-  };
-
-  # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -79,88 +67,36 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.franchesca = {
     isNormalUser = true;
     description = "Franchesca";
     extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
     useDefaultShell = true;
-    packages = with pkgs; [
-    #  thunderbird
-    ];
+    packages = with pkgs; [];
   };
 
-  # Install firefox.
   programs.firefox.enable = true;
-  programs.hyprland.enable = true;
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.fish;
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+  programs.hyprland.enable = true;
+
+  programs.steam.enable = true;
+  programs.steam.package = pkgs.steam.override {
+    extraPkgs = pkgs: with pkgs; [ libglvnd ];
+  };
+
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.epson-escpr ];
+  };
+
   virtualisation.libvirtd.enable = true;
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-     pkgs.hyfetch
-     pkgs.fastfetch
-     pkgs.micro-with-wl-clipboard
-     kdePackages.sddm
-     kdePackages.dolphin
-     kitty
-     waybar
-     wofi
-     gimp
-     wl-clipboard
-     grim
-     slurp
-     gcc15
-     hyprpaper
-     wlogout
-     pavucontrol
-     kdePackages.kio-extras
-     kdePackages.kio-admin
-     kdePackages.ark
-     feh
-     appimage-run
-     git
-     steam-run
-     epson-escpr
-     emacs-gtk
-     udisks
-     syslinux
-     qemu_full
-     transmission_4-gtk
-     eza
-     bat
-     dunst
-     gnome-disk-utility
-     gv
-     bash
-     discord
-     swaylock
-     swayidle
-     lxqt.lxqt-policykit
-     dosbox
-     hyprpicker
-     libinput
-     usbutils
-     mc
-  ];
   fonts = {
     enableDefaultPackages = true;
     packages = with pkgs; [
@@ -171,34 +107,69 @@
       terminus_font
       terminus_font_ttf
       nerd-fonts.iosevka
-  # Some programs need SUID wrappers, can be configured further or are
     ];
   };
 
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  environment.systemPackages = with pkgs; [
+    hyfetch
+    fastfetch
+    micro-with-wl-clipboard
+    kdePackages.sddm
+    kdePackages.dolphin
+    kitty
+    waybar
+    wofi
+    gimp
+    wl-clipboard
+    grim
+    slurp
+    gcc15
+    hyprpaper
+    wlogout
+    pavucontrol
+    kdePackages.kio-extras
+    kdePackages.kio-admin
+    kdePackages.ark
+    feh
+    appimage-run
+    git
+    epson-escpr
+    emacs-gtk
+    udisks
+    syslinux
+    qemu_full
+    transmission_4-gtk
+    eza
+    bat
+    dunst
+    gnome-disk-utility
+    gv
+    bash
+    vesktop
+    swaylock
+    swayidle
+    lxqt.lxqt-policykit
+    dosbox
+    hyprpicker
+    libinput
+    usbutils
+    mc
+    gnumake
+    ncurses
+    bash
+    lutris
+    unzip
+    godot
+    playerctl
+    blender
+    prismlauncher
+    hplip
+    hplipWithPlugin
+    system-config-printer
+  ];
 
-  # List services that you want to enable:
+  nixpkgs.config.allowUnfree = true;
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
-
+  system.stateVersion = "25.05";
 }

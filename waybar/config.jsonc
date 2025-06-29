@@ -26,7 +26,7 @@
         "pulseaudio"
     ],
 
-    "sway/workspaces": {
+    "hyprland/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
         "tooltip": false
@@ -39,7 +39,8 @@
 
     "clock": {
         "format": "{:%I:%M %p - %a, %d %b %Y}",
-        "tooltip": false
+        "tooltip": false,
+        "timezone": "America/Argentina/Buenos_Aires"
     },
 
     "cpu": {
